@@ -5,13 +5,17 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 
 import android.Manifest;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.util.SparseArray;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
+import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.vision.CameraSource;
 import com.google.android.gms.vision.Detector;
@@ -19,13 +23,16 @@ import com.google.android.gms.vision.text.TextBlock;
 import com.google.android.gms.vision.text.TextRecognizer;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
     SurfaceView mCameraView;
     TextView mTextView;
     CameraSource mCameraSource;
-
+    Button button;
+    List<String> list;
     private static final String TAG = "MainActivity";
     private static final int requestPermissionID = 101;
     @Override
@@ -33,12 +40,30 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-
+        button = findViewById(R.id.convert);
         mCameraView = findViewById(R.id.surfaceView);
         mTextView = findViewById(R.id.text_view);
+        list = new ArrayList<String>();
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (list.isEmpty())
+                {
+                    Toast.makeText(MainActivity.this,"No text to translate",Toast.LENGTH_LONG).show();
+                }
+                else{
 
+                    Intent intent = new Intent(MainActivity.this,Translate.class);
+                    //String s = mTextView.getText().toString();
+                    intent.putStringArrayListExtra("list",(ArrayList<String>)list);
+                    startActivity(intent);
+
+                }
+            }
+        });
         startCameraSource();
     }
+
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         if (requestCode != requestPermissionID) {
@@ -126,10 +151,13 @@ public class MainActivity extends AppCompatActivity {
                         mTextView.post(new Runnable() {
                             @Override
                             public void run() {
+                                list = new ArrayList<String>();
                                 StringBuilder stringBuilder = new StringBuilder();
                                 for (int i = 0; i < items.size(); i++) {
                                     TextBlock item = items.valueAt(i);
+                                    list.add(item.getValue());
                                     stringBuilder.append(item.getValue());
+                                    Log.d("Checking OCR",item.getValue());
                                     stringBuilder.append("\n");
                                 }
                                 mTextView.setText(stringBuilder.toString());
@@ -139,7 +167,5 @@ public class MainActivity extends AppCompatActivity {
                 }
             });
         }
-
-
     }
 }
