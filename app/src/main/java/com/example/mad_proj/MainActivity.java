@@ -1,12 +1,15 @@
 package com.example.mad_proj;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.util.Log;
 import android.util.SparseArray;
@@ -39,7 +42,11 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
+        ActionBar actionBar;
+        actionBar = getSupportActionBar();
+        ColorDrawable colorDrawable
+                = new ColorDrawable(Color.parseColor("#14b1ab"));
+        actionBar.setBackgroundDrawable(colorDrawable);
         button = findViewById(R.id.convert);
         mCameraView = findViewById(R.id.surfaceView);
         mTextView = findViewById(R.id.text_view);
@@ -53,7 +60,7 @@ public class MainActivity extends AppCompatActivity {
                 }
                 else{
 
-                    Intent intent = new Intent(MainActivity.this,Translate.class);
+                    Intent intent = new Intent(MainActivity.this,Translate_frag.class);
                     //String s = mTextView.getText().toString();
                     intent.putStringArrayListExtra("list",(ArrayList<String>)list);
                     startActivity(intent);
